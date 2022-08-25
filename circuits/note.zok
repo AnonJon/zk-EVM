@@ -1,0 +1,26 @@
+import "hashes/sha256/512bitPacked" as sha256packed;
+
+def main(field onh0, field onh1, private field ona, private field onb, private field onc, private field ond, field nn1h0, field nn1h1, private field nn1a, private field nn1b, private field nn1c, private field nn1d, field nn2h0, field nn2h1, private field nn2c, private field nn2d) -> field {
+    // get public key corresponding to private key
+    // too complex to implement for the hackathon :p - so sending in the public key instead
+    field pka = ona;
+    field pkb = onb;
+
+    // old note
+    field[2] mut h = sha256packed([pka, pkb, onc, ond]);
+    assert(h[0] == onh0); // verify with public input (hash of the note)
+    assert(h[1] == onh1);
+
+    // new note 1 that goes to pkreciever
+    h = sha256packed([nn1a, nn1b, nn1c, nn1d]);
+    assert(h[0] == nn1h0);
+    assert(h[1] == nn1h1);
+
+    // new note (left over change) that goes back to sender (pk)
+    h = sha256packed([pka, pkb, nn2c, nn2d]);
+    assert(h[0] == nn2h0);
+    assert(h[1] == nn2h1);
+
+    assert(ond == nn1d + nn2d); // assuming the values fit in 128 bit nums - hence onc, nn1c, nn2c are 0
+    return 1;
+}

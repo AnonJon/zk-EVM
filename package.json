@@ -1,0 +1,24 @@
+{
+  "name": "zk-evm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jongregis/zk-EVM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jongregis/zk-EVM/issues"
+  },
+  "homepage": "https://github.com/jongregis/zk-EVM#readme",
+  "dependencies": {
+    "bn.js": "^5.2.1",
+    "crypto": "^1.0.1"
+  }
+}

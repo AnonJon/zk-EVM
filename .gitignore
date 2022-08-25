@@ -1,0 +1,6 @@
+node_modules
+circuits/out
+circuits/out.r1cs
+circuits/abi.json
+circuits/proving.key
+circuits/verification.key
