@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
+
 pragma solidity ^0.8.15;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./verifier.sol";
@@ -30,11 +31,16 @@ contract Note is Verifier {
         _createNote(note, encryptedNote);
     }
 
-    function claimNote(uint256 amount) public {
+    function claimNote(
+        uint256 amountToClaim,
+        uint256 totalAmount,
+        string memory encryptedNote
+    ) public {
+        require(amountToClaim <= totalAmount, "Trying to claim too much");
         bytes32 note = sha256(
             abi.encodePacked(
                 bytes32(abi.encodePacked(msg.sender)),
-                bytes32(amount)
+                bytes32(totalAmount)
             )
         );
         require(notes[note] == State.Created, "note doesnt exist");
@@ -42,9 +48,18 @@ contract Note is Verifier {
         (
             bool sent, /*bytes memory data*/
 
-        ) = payable(msg.sender).call{value: amount * (10**18)}("");
+        ) = payable(msg.sender).call{value: amountToClaim * (10**18)}("");
         require(sent, "Failed to send Ether");
-        emit ClaimNote(msg.sender, amount * (10**18));
+        emit ClaimNote(msg.sender, amountToClaim * (10**18));
+        if (amountToClaim != totalAmount) {
+            bytes32 newNote = sha256(
+                abi.encodePacked(
+                    bytes32(abi.encodePacked(msg.sender)),
+                    bytes32(totalAmount - amountToClaim)
+                )
+            );
+            _createNote(newNote, encryptedNote);
+        }
     }
 
     function transferNote(

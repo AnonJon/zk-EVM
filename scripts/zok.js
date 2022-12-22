@@ -18,6 +18,7 @@ async function getKey(type) {
 
 async function main() {
   try {
+    console.log(process.env.RINKEBY_RPC);
     const provider = new ethers.providers.JsonRpcProvider(
       process.env.RINKEBY_RPC,
       4
