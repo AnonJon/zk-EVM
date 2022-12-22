@@ -1,0 +1,160 @@
+/* Default desktop styles above 600px */
+
+.mainHomePage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 15px;
+}
+
+.titleMotto {
+  margin-top: 60px;
+  margin-bottom: 20px;
+  display: flex;
+}
+.titleMotto p {
+  font-size: 20px;
+}
+.titleMotto p:nth-child(2) {
+  color: rgb(123, 63, 228);
+  padding-left: 5px;
+}
+.titleName {
+  display: flex;
+  margin-top: -40px;
+}
+.titleName p {
+  font-size: 70px;
+}
+.titleName p:nth-child(2) {
+  color: rgb(123, 63, 228);
+}
+.bannerDiv {
+  background-image: -webkit-linear-gradient(
+    120deg,
+    white 33%,
+    rgb(123, 63, 228) 22% 34.5%,
+    black 20%
+  );
+  position: relative;
+  z-index: 0;
+  padding: 40px;
+  padding-bottom: 40px;
+  color: white;
+}
+.bannerDiv:after {
+  content: "";
+  position: absolute;
+  background-color: transparent;
+  left: 0;
+  bottom: 0;
+  width: 44%;
+  border: rgb(123, 63, 228) solid 5px;
+}
+.homeStats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background: white;
+  padding: 20px;
+  padding-top: 150px;
+  color: black;
+  width: 100%;
+}
+.homeStat {
+  text-align: center;
+}
+.homeStat h1 {
+  color: rgb(123, 63, 228);
+  font-size: 40px;
+  font-weight: 300;
+}
+
+.bottomContent {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  padding-top: 150px;
+  justify-content: space-evenly;
+  padding-bottom: 100px;
+}
+
+.bottomContent h1 {
+  color: black;
+  font-size: 30px;
+  text-align: left;
+  /* font-weight: 400; */
+}
+
+.bottomContentParagraph {
+  padding-left: 40px;
+  align-self: center;
+}
+
+.bottomContentLeft {
+  width: 400px;
+}
+
+.numImage {
+  height: 380px;
+  width: 380px;
+}
+
+.numItem {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 40px;
+  align-items: center;
+  /* width: 400px; */
+}
+
+.numBubble {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+  background: rgb(123, 63, 228);
+}
+
+.numText {
+  padding-left: 30px;
+  padding-top: 10px;
+  width: 250px;
+}
+
+/* Convert to mobile styles below 600px */
+
+@media only screen and (max-width: 600px) {
+  .numText {
+    color: blue;
+  }
+
+  .bannerDiv {
+    background-image: none;
+    background-color: black;
+  }
+  .bannerDiv:after {
+    width: 100%;
+  }
+
+  .homeStats {
+    flex-direction: column;
+    height: 600px;
+  }
+
+  .bottomContent {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .numItem {
+    padding-top: 80px;
+  }
+
+  .bottomContentParagraph {
+    padding: 0px;
+  }
+}

@@ -1,13 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
-
 pragma solidity ^0.8.15;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./verifier.sol";
 
-contract SecretNote is Verifier {
-    ERC20 internal DAI_TOKEN_ADDRESS =
-        ERC20(0xaD6D458402F60fD3Bd25163575031ACDce07538D);
-
+contract Note is Verifier {
     constructor() {}
 
     enum State {
@@ -15,22 +11,23 @@ contract SecretNote is Verifier {
         Created,
         Spent
     }
-    mapping(bytes32 => State) public notes; // mapping of hash of the note to state
+    mapping(bytes32 => State) public notes;
     string[] public allNotes;
     bytes32[] public allHashedNotes;
 
-    event Claim(address to, uint256 amount);
+    event ClaimNote(address to, uint256 amount);
     event NoteCreated(bytes32 noteId, uint256 index);
 
     function createNote(
         address owner,
         uint256 amount,
         string memory encryptedNote
-    ) public {
+    ) public payable {
+        require(msg.value >= amount * (10**18), "not enough ether");
         bytes32 note = sha256(
             abi.encodePacked(bytes32(abi.encodePacked(owner)), bytes32(amount))
         );
-        createNote(note, encryptedNote);
+        _createNote(note, encryptedNote);
     }
 
     function claimNote(uint256 amount) public {
@@ -42,11 +39,12 @@ contract SecretNote is Verifier {
         );
         require(notes[note] == State.Created, "note doesnt exist");
         notes[note] = State.Spent;
-        require(
-            DAI_TOKEN_ADDRESS.transfer(msg.sender, amount * (10**18)),
-            "daiToken transfer failed"
-        );
-        emit Claim(msg.sender, amount * (10**18));
+        (
+            bool sent, /*bytes memory data*/
+
+        ) = payable(msg.sender).call{value: amount * (10**18)}("");
+        require(sent, "Failed to send Ether");
+        emit ClaimNote(msg.sender, amount * (10**18));
     }
 
     function transferNote(
@@ -65,16 +63,16 @@ contract SecretNote is Verifier {
 
         notes[spendingNote] = State.Spent;
         bytes32 newNote1 = calcNoteHash(input[2], input[3]);
-        createNote(newNote1, encryptedNote1);
+        _createNote(newNote1, encryptedNote1);
         bytes32 newNote2 = calcNoteHash(input[4], input[5]);
-        createNote(newNote2, encryptedNote2);
+        _createNote(newNote2, encryptedNote2);
     }
 
     function getNotesLength() public view returns (uint256) {
         return allNotes.length;
     }
 
-    function createNote(bytes32 note, string memory encryptedNote) internal {
+    function _createNote(bytes32 note, string memory encryptedNote) internal {
         notes[note] = State.Created;
         allNotes.push(encryptedNote);
         allHashedNotes.push(note);

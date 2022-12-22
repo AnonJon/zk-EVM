@@ -1,0 +1,41 @@
+/* Default desktop styles above 600px */
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  /* full page / spread header and footer to top and bottom */
+  min-height: 100%;
+  height: 100%;
+  justify-content: space-between;
+
+  /* center horizontally */
+  width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mainArea {
+  display: flex;
+  flex: 1;
+  padding: 0px;
+}
+
+.backToHome {
+  margin: 3rem 0 0;
+}
+
+/* Convert to mobile styles below 600px */
+
+@media only screen and (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
+}

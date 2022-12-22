@@ -4,3 +4,7 @@ circuits/out.r1cs
 circuits/abi.json
 circuits/proving.key
 circuits/verification.key
+circuits/witness
+circuits/proof.json
+circuits/out.wtns
+.envrc

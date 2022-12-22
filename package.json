@@ -19,6 +19,9 @@
   "homepage": "https://github.com/jongregis/zk-EVM#readme",
   "dependencies": {
     "bn.js": "^5.2.1",
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.1",
+    "ethers": "^5.7.0",
+    "zokrates-js": "^1.1.2"
   }
 }

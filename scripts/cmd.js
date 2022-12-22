@@ -7,15 +7,13 @@ function getSecretZokratesParams(concat) {
     concat.slice(32, 64),
     concat.slice(64, 96),
     concat.slice(96),
-  ]; //.map(e => e.toString(10))
+  ];
 }
 
 function getPublicZokratesParams(hexPayload) {
-  // console.log('getPublicZokratesParams - hexPayload', hexPayload)
   const buf = Buffer.from(hexPayload, "hex");
   const digest = crypto.createHash("sha256").update(buf).digest("hex");
-  // console.log('digest', digest)
-  // split into 128 bits each
+
   return [digest.slice(0, 32), digest.slice(32)];
 }
 
@@ -27,7 +25,6 @@ function getHexPayload(from, amount) {
 
 function getNoteParams(from, amount) {
   let hexPayload = getHexPayload(from, amount);
-  // console.log('hexPayload', hexPayload)
   let zkParams = getPublicZokratesParams(hexPayload).concat(
     getSecretZokratesParams(hexPayload)
   );
@@ -35,32 +32,27 @@ function getNoteParams(from, amount) {
 }
 
 function printZokratesCommand(params) {
-  let cmd = "./zokrates compute-witness -a ";
+  let s = [];
   params.forEach((p) => {
-    cmd += `${new BN(p, 16).toString(10)} `;
+    s.push(`${new BN(p, 16).toString(10)}`);
   });
-  console.log(cmd);
+  return s;
 }
 
-function getTransferZkParams(from, fromAmount, to, toAmount) {
+const getTransferZkParams = async (from, fromAmount, to, toAmount) => {
   from = from.slice(2);
-  fromAmount = fromAmount.slice(2);
   to = to.slice(2);
-  toAmount = toAmount.slice(2);
 
-  let change = parseInt(fromAmount, 16) - parseInt(toAmount, 16);
+  let change = parseInt(fromAmount) - parseInt(toAmount);
   const params = getNoteParams(from, fromAmount).concat(
     getNoteParams(to, toAmount)
   );
   let leftOver = getNoteParams(from, change);
   // for the leftover change note, first 2 params (spender public key) are the same. delete elements at 2, 3 index
   leftOver.splice(2, 2);
-  printZokratesCommand(params.concat(leftOver));
-}
+  return printZokratesCommand(params.concat(leftOver));
+};
 
-getTransferZkParams(
-  "0x3644B986B3F5Ba3cb8D5627A22465942f8E06d09", // sender
-  "0xb", // value of the secret note
-  "0x9e8f633D0C46ED7170EF3B30E291c64a91a49C7E", // receiver
-  "0x9" // value to be sent
-);
+module.exports = {
+  getTransferZkParams,
+};
