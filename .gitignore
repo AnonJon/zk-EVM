@@ -8,3 +8,7 @@ circuits/witness
 circuits/proof.json
 circuits/out.wtns
 .envrc
+
+# foundry
+cache
+out
