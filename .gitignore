@@ -12,3 +12,4 @@ circuits/out.wtns
 # foundry
 cache
 out
+lib/forge-std
