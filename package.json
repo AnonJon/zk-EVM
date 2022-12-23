@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/jongregis/zk-EVM#readme",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.8.0",
     "bn.js": "^5.2.1",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",

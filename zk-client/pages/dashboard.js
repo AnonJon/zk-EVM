@@ -35,6 +35,10 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+
+  useEffect(() => {
     if (address) {
       (async () => {
         const c = await getallNotes(address);
@@ -44,45 +48,45 @@ export default function Dashboard() {
     }
   }, [address]);
 
-  useEffect(() => {
-    setDomLoaded(true);
-  }, []);
-
   return (
     <>
-      {domLoaded && (
+      {isMounted && (
         <Layout>
           {/* {isConnected ? <p>Amount: {amount}</p> : <></>} */}
-          <TableContainer>
-            <Table variant="simple">
-              <TableCaption>Transactions</TableCaption>
-              <Thead>
-                <Tr>
-                  <Th>Hash</Th>
-                  <Th>Status</Th>
-                  <Th isNumeric>Amount</Th>
-                </Tr>
-              </Thead>
-              {amounts.map((amount) => {
-                return (
-                  <Tbody key={amount.hash}>
-                    <Tr>
-                      <Th>{amount.hash}</Th>
-                      <Th>{amount.status}</Th>
-                      <Th isNumeric>{amount.amount}</Th>
-                    </Tr>
-                  </Tbody>
-                );
-              })}
-              <Tfoot>
-                <Tr>
-                  <Th></Th>
-                  <Th></Th>
-                  <Th isNumeric></Th>
-                </Tr>
-              </Tfoot>
-            </Table>
-          </TableContainer>
+          {domLoaded && isConnected ? (
+            <TableContainer>
+              <Table variant="simple">
+                <TableCaption>Transactions</TableCaption>
+                <Thead>
+                  <Tr>
+                    <Th>Hash</Th>
+                    <Th>Status</Th>
+                    <Th>zk ETH</Th>
+                  </Tr>
+                </Thead>
+                {amounts.map((amount) => {
+                  return (
+                    <Tbody key={amount.hash}>
+                      <Tr>
+                        <Th>{amount.hash}</Th>
+                        <Th>{amount.status}</Th>
+                        <Th isNumeric>{amount.amount}</Th>
+                      </Tr>
+                    </Tbody>
+                  );
+                })}
+                <Tfoot>
+                  <Tr>
+                    <Th></Th>
+                    <Th></Th>
+                    <Th isNumeric></Th>
+                  </Tr>
+                </Tfoot>
+              </Table>
+            </TableContainer>
+          ) : (
+            <></>
+          )}
         </Layout>
       )}
     </>
