@@ -11,45 +11,73 @@ contract Note is Verifier {
         Created,
         Spent
     }
-    mapping(bytes32 => State) public notes;
-    string[] public allNotes;
-    bytes32[] public allHashedNotes;
+    struct NoteInfo {
+        State state;
+        bytes32 encryptedNote;
+        string encryptedNoteString;
+    }
+    // mapping(bytes32 => State) public notes;
+    mapping(address => mapping(uint256 => NoteInfo)) private userNotes;
+    mapping(address => uint256[]) public userTxs;
+
+    // string[] public allNotes;
+    // bytes32[] public allHashedNotes;
 
     event ClaimNote(address to, uint256 amount);
-    event NoteCreated(bytes32 noteId, uint256 index);
+    event NoteCreated(bytes32 indexed noteId, uint256 indexed timestamp);
 
-    function createNote(
-        address owner,
-        uint256 amount,
-        string memory encryptedNote
-    ) public payable {
-        require(msg.value >= amount * (10**18), "not enough ether");
+    function createNote(string memory encryptedNote) external payable {
         bytes32 note = sha256(
-            abi.encodePacked(bytes32(abi.encodePacked(owner)), bytes32(amount))
+            abi.encodePacked(
+                bytes32(abi.encodePacked(msg.sender)),
+                bytes32(msg.value)
+            )
         );
         _createNote(note, encryptedNote);
+    }
+
+    function _createNote(bytes32 note, string memory encryptedNote) internal {
+        userNotes[msg.sender][block.timestamp] = NoteInfo({
+            state: State.Created,
+            encryptedNote: note,
+            encryptedNoteString: encryptedNote
+        });
+        userTxs[msg.sender].push(block.timestamp);
+        emit NoteCreated(note, block.timestamp);
+    }
+
+    function getNotesByUser() external view returns (NoteInfo[] memory) {
+        uint256[] memory txs = userTxs[msg.sender];
+        NoteInfo[] memory notes = new NoteInfo[](txs.length);
+        for (uint256 i = 0; i < txs.length; i++) {
+            NoteInfo memory n = userNotes[msg.sender][txs[i]];
+            notes[i] = n;
+        }
+        return notes;
     }
 
     function claimNote(
         uint256 amountToClaim,
         uint256 totalAmount,
-        string memory encryptedNote
-    ) public {
+        string memory encryptedNote,
+        uint256 timestamp
+    ) external {
         require(amountToClaim <= totalAmount, "Trying to claim too much");
-        bytes32 note = sha256(
-            abi.encodePacked(
-                bytes32(abi.encodePacked(msg.sender)),
-                bytes32(totalAmount)
-            )
-        );
-        require(notes[note] == State.Created, "note doesnt exist");
-        notes[note] = State.Spent;
+        // bytes32 note = sha256(
+        //     abi.encodePacked(
+        //         bytes32(abi.encodePacked(msg.sender)),
+        //         bytes32(totalAmount)
+        //     )
+        // );
+        NoteInfo memory n = userNotes[msg.sender][timestamp];
+        require(n.state == State.Created, "note doesnt exist");
+        userNotes[msg.sender][timestamp].state = State.Spent;
         (
             bool sent, /*bytes memory data*/
 
-        ) = payable(msg.sender).call{value: amountToClaim * (10**18)}("");
+        ) = payable(msg.sender).call{value: amountToClaim}("");
         require(sent, "Failed to send Ether");
-        emit ClaimNote(msg.sender, amountToClaim * (10**18));
+        emit ClaimNote(msg.sender, amountToClaim);
         if (amountToClaim != totalAmount) {
             bytes32 newNote = sha256(
                 abi.encodePacked(
@@ -65,33 +93,26 @@ contract Note is Verifier {
         Proof memory proof,
         uint256[7] memory input,
         string memory encryptedNote1,
-        string memory encryptedNote2
-    ) public {
+        string memory encryptedNote2,
+        uint256 timestamp
+    ) external {
         require(verifyTx(proof, input), "Invalid zk proof");
-
-        bytes32 spendingNote = calcNoteHash(input[0], input[1]);
+        NoteInfo memory spendingNote = userNotes[msg.sender][timestamp];
         require(
-            notes[spendingNote] == State.Created,
+            spendingNote.state == State.Created,
             "spendingNote doesnt exist"
         );
 
-        notes[spendingNote] = State.Spent;
+        userNotes[msg.sender][timestamp].state = State.Spent;
         bytes32 newNote1 = calcNoteHash(input[2], input[3]);
         _createNote(newNote1, encryptedNote1);
         bytes32 newNote2 = calcNoteHash(input[4], input[5]);
         _createNote(newNote2, encryptedNote2);
     }
 
-    function getNotesLength() public view returns (uint256) {
-        return allNotes.length;
-    }
-
-    function _createNote(bytes32 note, string memory encryptedNote) internal {
-        notes[note] = State.Created;
-        allNotes.push(encryptedNote);
-        allHashedNotes.push(note);
-        emit NoteCreated(note, allNotes.length - 1);
-    }
+    // function getNotesLength() external view returns (uint256) {
+    //     return allNotes.length;
+    // }
 
     function calcNoteHash(uint256 _a, uint256 _b)
         internal

@@ -10,7 +10,7 @@ async function execute() {
   console.dir(tx, { depth: null });
 }
 
-function encrypt(address, _amount) {
+async function encrypt(address, _amount) {
   // 20 12
   let amount = new BN(_amount, 16).toString(16, 24); // 12 bytes = 24 chars in hex
   const payload = address + amount;

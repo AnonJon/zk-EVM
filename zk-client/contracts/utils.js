@@ -51,15 +51,6 @@ export const getAllNotes = async () => {
   return notes;
 };
 
-// export const claimDAI = async (amount) => {
-//   const accounts = await getAccounts();
-//   console.log("accounts", accounts, amount);
-//   await SecretNote.methods.claimNote(amount).send({
-//     from: accounts[0],
-//     gasPrice: "0x" + parseInt("10000000000").toString(16),
-//   });
-// };
-
 export function getNoteHash(address, amount) {
   let _address = address + "000000000000000000000000";
   let _amount = new BN(amount, 16).toString(16, 64); // 32 bytes = 64 chars in hex

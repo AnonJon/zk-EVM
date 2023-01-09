@@ -33,8 +33,7 @@ async function main() {
 
     const zokratesProvider = await initialize();
     const source = `import "hashes/sha256/512bitPacked" as sha256packed; def main(field onh0, field onh1, private field ona, private field onb, private field onc, private field ond, field nn1h0, field nn1h1, private field nn1a, private field nn1b, private field nn1c, private field nn1d, field nn2h0, field nn2h1, private field nn2c, private field nn2d) -> field {
-    // get public key corresponding to private key
-    // too complex right now so sending in the public key instead
+
     field pka = ona;
     field pkb = onb;
 
