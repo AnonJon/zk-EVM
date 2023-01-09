@@ -1,23 +1,15 @@
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 export function useIsMounted() {
-  const isMounted = useRef(false); // unmounted by default
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    isMounted.current = true; // mounted
+    isMounted.current = true;
 
     return () => {
-      isMounted.current = false; // unmounted
+      isMounted.current = false;
     };
-  }, []); // run once on mount
+  }, []);
 
-  return useCallback(() => isMounted.current, []); // return function that checks mounted status
+  return useCallback(() => isMounted.current, []);
 }

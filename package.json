@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/jongregis/zk-EVM#readme",
   "dependencies": {
+    "@maticnetwork/maticjs": "^3.5.0",
+    "@maticnetwork/maticjs-ethers": "^1.0.3",
     "@openzeppelin/contracts": "^4.8.0",
     "bn.js": "^5.2.1",
     "crypto": "^1.0.1",
